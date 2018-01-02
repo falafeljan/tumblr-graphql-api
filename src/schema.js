@@ -5,7 +5,7 @@
 
 // graphql-tools combines a schema string with resolvers.
 import { makeExecutableSchema } from 'graphql-tools';
-import fetch from 'node-fetch'
+import resolvers from './resolvers';
 
 // Construct a schema, using GraphQL schema language
 const typeDefs = `
@@ -161,31 +161,6 @@ const typeDefs = `
   }
 `;
 
-// Provide resolver functions for your schema fields
-const resolvers = {
-  Query: {
-    getPosts: async (root, args, context) => {
-      const res = await fetch(`https://api.tumblr.com/v2/blog/${args.username}.tumblr.com/posts?notes_info=true&reblog_info=true&api_key=${args.apiKey}`);
-      const data = await res.json();
-      
-      return data.response.posts
-    }
-  },
-  Post: {
-    __resolveType(obj, context, info){
-      switch (obj.type) {
-        case 'audio': return 'AudioPost';
-        case 'chat': return 'ChatPost';
-        case 'link': return 'LinkPost';
-        case 'text': return 'TextPost';
-        case 'photo': return 'PhotoPost';
-        case 'quote': return 'QuotePost';
-        default: return 'UnknownPost';
-      }
-    },
-  },
-};
-
 export const schema = makeExecutableSchema({
   typeDefs,
   resolvers,
@@ -197,16 +172,3 @@ export function context(headers, secrets) {
     secrets,
   };
 };
-
-// Optional: Export a root value to be passed during execution
-// export const rootValue = {};
-
-// Optional: Export a root function, that returns root to be passed
-// during execution, accepting headers and secrets. It can return a
-// promise. rootFunction takes precedence over rootValue.
-// export function rootFunction(headers, secrets) {
-//   return {
-//     headers,
-//     secrets,
-//   };
-// };
