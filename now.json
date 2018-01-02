@@ -1,0 +1,8 @@
+{
+  "name": "tumblr-graphql-api",
+  "alias": "tumblr-graphql-api.now.sh",
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
+
